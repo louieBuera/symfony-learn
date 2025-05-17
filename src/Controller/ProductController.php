@@ -41,10 +41,15 @@ final class ProductController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
+        if($form->isSubmitted() && $form->isValid()) {
             $manager->persist($product);
 
             $manager->flush();
+
+            $this->addFlash(
+                'notice',
+                'Product created successfully!'
+            );
 
             return $this->redirectToRoute('products_show', [
                 'id' => $product->getId()
