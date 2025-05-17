@@ -72,7 +72,7 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            
+
             $manager->flush();
 
             $this->addFlash(
@@ -87,6 +87,30 @@ final class ProductController extends AbstractController
 
         return $this->render('product/edit.html.twig', [
             'form' => $form
+        ]);
+    }
+
+    #[Route('/product/{id<\d+>}/delete', name: 'products_delete')]
+    public function delete(
+        Product $product,
+        Request $request,
+        EntityManagerInterface $manager
+    ): Response {
+        if($request->isMethod('POST')){
+            $manager->remove($product);
+
+            $manager->flush();
+
+            $this->addFlash(
+                'notice',
+                'Product deleted successfully'
+            );
+            
+            return $this->redirectToRoute('products_index');
+        }
+
+        return $this->render('product/delete.html.twig', [
+            'id' => $product->getId()
         ]);
     }
 }
